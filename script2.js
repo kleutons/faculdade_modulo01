@@ -5,4 +5,4 @@ console.log(`Olá, ${nome}`);
 
 let idade = rlSync.question('Qual o seu idade?\n');
 
-console.log(`Sua idade é:, ${idade}`);
+console.log(`Sua idade é:git pu ${idade}`);
