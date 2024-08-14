@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabalhado com Eventos</title>
+</head>
+<body>
+    
+    <h1 id="trocarTexto" onmouseover="passarMouse()" onmouseout="tirarMouse()" >
+        Trocar de Texto
+    </h1>
+    <p>
+        Click no botao a seguir e veja o resultado:
+    </p>
+    <form>
+        <input type="button" onclick="exemploEvento()" value="Abri Alert"/>
+    </form>
+    
+</body>
+<script>
+    function exemploEvento(){
+        alert("mostrando o alert")
+    }
+    function passarMouse(){
+        document.getElementById("trocarTexto").innerHTML = "Passou o mouse aqui!"
+    }
+    function tirarMouse(){
+        document.getElementById("trocarTexto").innerHTML = "Trocar de Texto"
+    }
+</script>
+</html>
