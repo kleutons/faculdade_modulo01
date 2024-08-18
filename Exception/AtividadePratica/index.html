@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática</title>
+</head>
+
+<style>
+        *{
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            
+        }
+        #formulario {
+            background-color: #fff;
+            padding: 20px;
+            width: 400px;
+            margin: 0 auto;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        #formulario input[type="text"],
+        #formulario input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+
+        #formulario label {
+            margin-left: 3px;
+        }
+        
+        #formulario input[type="button"] {
+            width: 48%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        #formulario input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+
+        #resultados {
+            background-color: #0d1540;
+            color: white;
+            padding: 20px;            
+            width:400px;
+            text-align: left;
+            margin: 0 auto;
+        }
+
+        #resultados div {
+            margin-bottom: 5px;
+        }
+</style>
+
+<body>
+    <form id="formulario">
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="number" id="idade" placeholder="Idade">
+        <span>Cargo:</span>
+        <input type="radio" name="cargo" value="Gerente" id="gerente">
+        <label for="gerente">Gerente</label>
+        <input type="radio" name="cargo" value="Desenvolvedor" id="desenvolvedor">
+        <label for="desenvolvedor">Desenvolvedor</label>
+        <input type="text" id="departamento" placeholder="Departamento">
+        <input type="text" id="linguagem" placeholder="Linguagem de Programação">
+        
+        <div>
+            <input type="button" value="Se Apresentar" onclick="exibirApresentacao()">
+            <input type="button" value="Limpar" onclick="limparFormulario()">
+            <input type="button" value="Trabalhar" onclick="exibirTrabalhar()">
+            <input type="button" value="Realizar Tarefa" onclick="exibirTarefa()">
+        </div>
+    </form>
+
+    <div id="resultados">
+        <h2 id="mostrarNome"></h2>
+        <div id="mostrarApresentacao"></div>
+        <hr>
+        <div id="mostrarTrabalhando"> </div>
+        <div id="mostrarTarefa"></div>
+    </div>
+</body>
+
+<script>
+    // Classe base Funcionario
+    class Funcionario{
+        constructor(nome,idade,cargo){
+            this.nome = nome;
+            this.idade = idade;
+            this.cargo = cargo;
+            this.trabalhando = false;
+        }
+        seApresentar(){
+            console.log("Olá sou: "+ this.nome + " tenho "+ this.idade+ " anos e meu cargo é: "+this.cargo+".");
+            document.getElementById('mostrarNome').innerHTML = "Olá meu nome é: " + this.nome;
+            document.getElementById('mostrarApresentacao').innerHTML = "Tenho " + this.idade + " anos. <br/> e Meu Cargo é: "+this.cargo;
+        }
+        trabalhar(){
+            // Alternar true e false
+            this.trabalhando = !this.trabalhando;
+            let divTrabalhando = document.getElementById('mostrarTrabalhando');
+            if(this.trabalhando){
+                divTrabalhando.innerHTML =  'Funcionário Está Trabalhando';
+                divTrabalhando.style.color = 'lightgreen';
+            }else{
+                divTrabalhando.innerHTML =  'Funcionário NÃO está Trabalhando';
+                divTrabalhando.style.color = 'red';
+            }
+            return;
+        }
+    }
+
+    // Classe Gerente que herda de Funcionario
+    class Gerente extends Funcionario{
+        constructor(nome,idade,cargo,departamento){
+            super(nome, idade, cargo); // Chama o construtor da classe pai
+            this.departamento = departamento;
+        }
+        gerenciar() {
+            document.getElementById('mostrarTarefa').innerHTML = `${this.nome} está gerenciando o departamento de ${this.departamento}.`;
+        }
+    }
+
+    // Classe Desenvolvedor que herda de Funcionario
+    class Desenvolvedor extends Funcionario{
+        constructor(nome,idade,cargo,linguagem){
+            super(nome, idade, cargo); // Chama o construtor da classe pai
+            this.linguagem = linguagem;
+        }
+        programar() {            
+            document.getElementById('mostrarTarefa').innerHTML = `${this.nome} está programando na linguagem: ${this.linguagem}.`;
+
+        }
+    }
+
+    // Variável global para armazenar o funcionário digitado 
+    let funcionario = {
+        nome: '',
+        idade: '',
+        cargo: '',
+        trabalhando: false,
+        departamento: '',
+        linguagem: ''
+    }
+    
+    // Variável global para armazenar o funcionário atual
+    let funcionarioGerente;
+    let funcionarioDesenvolvedor;
+
+    function exibirErro(){
+
+        if(funcionario.nome === ''){
+            throw new Error("Preencha o nome do funcionário.");
+        }else
+        if(funcionario.nome.length < 3){
+            throw new Error("Nome do funcionário muito curto");
+        }
+
+        if(funcionario.idade === ''){
+            throw new Error("Preenha a idade do funcionário.")
+        }
+
+        if(funcionario.cargo === ''){
+            throw new Error("Selecione o cargo do funcionário.")
+        }
+
+        return true;
+    }
+
+    function erroApresentacao(){
+        //se nao exite funcionário
+        if(!funcionarioGerente && !funcionarioDesenvolvedor){
+            throw new Error("Se Apresente Primeiro!");
+        }
+
+        if(funcionario.cargo === 'Gerente' && funcionario.departamento === ''){
+            throw new Error("Preenha o Departamento do funcionário.")
+        }
+
+        if(funcionario.cargo === 'Desenvolvedor' && funcionario.linguagem === ''){
+            throw new Error("Preenha a Linguagem de Programação do funcionário.")
+        }
+
+    }
+
+    function obterCargo() {
+        //obeter cargo atraves do input radio
+        const cargos = document.getElementsByName('cargo');
+        let cargoSelecionado = '';
+        for (let i = 0; i < cargos.length; i++) {
+            if (cargos[i].checked) {
+                cargoSelecionado = cargos[i].value;
+                break;
+            }
+        }
+        return cargoSelecionado;
+    }
+    
+    function receberDados(){
+        //recebe dados do formulario
+        funcionario.nome = document.getElementById('nome').value;
+        funcionario.idade = document.getElementById('idade').value;
+        funcionario.cargo = obterCargo();
+        funcionario.departamento = document.getElementById('departamento').value;
+        funcionario.linguagem = document.getElementById('linguagem').value;
+
+        try{
+            exibirErro();
+        }catch(error){
+            alert("Ocorreu um erro: " + error.message);
+        }
+        
+        
+    }
+
+
+    function limparFormulario(){
+        
+        document.getElementById('formulario').reset();
+
+        // Limpar Objeto 
+        for(propriedade in funcionario){
+            //trabalando é true ou false
+            if(propriedade !== 'trabalhando'){
+            funcionario[propriedade] = '';
+            }
+        }
+        funcionario.trabalhando = false;
+        
+        document.getElementById('mostrarNome').innerHTML = '';
+        document.getElementById('mostrarApresentacao').innerHTML = '';
+        document.getElementById('mostrarTrabalhando').innerHTML = '';
+        document.getElementById('mostrarTarefa').innerHTML = '';
+        
+    }
+
+
+
+    function exibirApresentacao(){
+        receberDados();
+        if(funcionario.cargo == 'Gerente'){
+            funcionarioGerente = new Gerente(funcionario.nome, funcionario.idade, funcionario.cargo, funcionario.departamento);
+            funcionarioGerente.seApresentar();
+        }
+        if(funcionario.cargo == 'Desenvolvedor'){
+            funcionarioDesenvolvedor = new Desenvolvedor(funcionario.nome, funcionario.idade, funcionario.cargo, funcionario.linguagem);
+            funcionarioDesenvolvedor.seApresentar();
+        }
+    }
+
+    function exibirTrabalhar(){
+
+        receberDados();
+        
+
+        try{
+            
+            erroApresentacao();
+            // Definir trabalhando = true ou false
+            funcionario.trabalhando = !funcionario.trabalhando;
+        
+            //Alimenta dados
+            if(funcionario.cargo === 'Gerente'){
+                funcionarioGerente.departamento = funcionario.departamento;
+                funcionarioGerente.trabalhar();
+            }else
+            if(funcionario.cargo === 'Desenvolvedor'){                
+                funcionarioDesenvolvedor.linguagem = funcionario.linguagem;
+                funcionarioDesenvolvedor.trabalhar();
+            }
+        
+        }catch(error){
+            alert("Ocorreu um erro: " + error.message);            
+        }
+    }
+
+    function exibirTarefa(){
+        receberDados();
+        exibirApresentacao();
+
+        try{
+            erroApresentacao();
+            console.log(funcionario.cargo);
+            
+            if(funcionario.cargo === 'Gerente'){
+                funcionarioGerente.departamento = funcionario.departamento;
+                funcionarioGerente.gerenciar();  
+            }else
+            if(funcionario.cargo === 'Desenvolvedor'){
+                funcionarioDesenvolvedor.linguagem = funcionario.linguagem;
+                funcionarioDesenvolvedor.programar();  
+            }
+            
+        }catch(error){
+            alert("Ocorreu um erro: " + error.message);            
+        }
+
+    }
+
+
+
+</script>
+</html>
